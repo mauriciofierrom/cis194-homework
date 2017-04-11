@@ -20,9 +20,20 @@ module Basis where
 -- >>> toDigits (-17)
 -- []
 
-toDigits :: Integer -> [Integer]
-toDigits = undefined
+{-toDigits :: Integer -> [Integer]
+toDigits x 
+  | x <=0 = []
+  | otherwise = (getInt . show) x
+    where
+      getInt :: String -> [Integer]
+      getInt = map (read . fromCharToString)
+      fromCharToString :: Char -> String
+      fromCharToString c = [c]-}
 
+toDigits :: Integer -> [Integer]
+toDigits x
+  | x <=0 = []
+  | otherwise = toDigits (x `div` 10) ++ [x `mod` 10]
 ----------------------------------------------------------------------
 -- Exercise 2
 ----------------------------------------------------------------------
@@ -35,7 +46,11 @@ toDigits = undefined
 -- [1,4,3]
 
 doubleEveryOther :: [Integer] -> [Integer]
-doubleEveryOther = undefined
+doubleEveryOther []         = []
+doubleEveryOther (x:[])     = [x]
+doubleEveryOther (x:(y:zs)) 
+  | (even . length) (x:(y:zs)) = (x * 2) : y : doubleEveryOther zs
+  | otherwise = x : (y * 2) : doubleEveryOther zs
 
 ----------------------------------------------------------------------
 -- Exercise 3
@@ -47,8 +62,10 @@ doubleEveryOther = undefined
 -- 22
 
 sumDigits :: [Integer] -> Integer
-sumDigits = undefined
-
+sumDigits (x:xs)
+  | null (x:xs) = 0
+  | xs == [] = sum (toDigits x)
+  | otherwise = sum (toDigits x) + sumDigits xs
 ----------------------------------------------------------------------
 -- Exercise 4
 ----------------------------------------------------------------------
@@ -61,7 +78,7 @@ sumDigits = undefined
 -- False
 
 validate :: Integer -> Bool
-validate = undefined
+validate x = ((sumDigits . doubleEveryOther . toDigits) x) `mod` 10 == 0
 
 ----------------------------------------------------------------------
 -- Exercise 5
@@ -74,9 +91,13 @@ type Move = (Peg, Peg)
 --
 -- >>> hanoi 2 "a" "b" "c"
 -- [("a","c"),("a","b"),("c","b")]
+-- >>> hanoi 3 "a" "b" "c"
+-- [("a","b"),("a","c"),("b","c"),("a","b"),("c","a"),("c","b"),("a","b")]
 
 hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
-hanoi = undefined
+hanoi n start finish temp
+  | n == 1 = [(start, finish)]
+  | otherwise = hanoi (n - 1) start temp finish ++ hanoi 1 start finish temp ++ hanoi (n - 1) temp finish start
 
 ----------------------------------------------------------------------
 -- Exercise 6 (Optional)
