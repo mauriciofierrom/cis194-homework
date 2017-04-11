@@ -47,7 +47,7 @@ toDigits x
 
 doubleEveryOther :: [Integer] -> [Integer]
 doubleEveryOther []         = []
-doubleEveryOther (x:[])     = [x]
+doubleEveryOther [x]     = [x]
 doubleEveryOther (x:(y:zs)) 
   | (even . length) (x:(y:zs)) = (x * 2) : y : doubleEveryOther zs
   | otherwise = x : (y * 2) : doubleEveryOther zs
@@ -64,13 +64,13 @@ doubleEveryOther (x:(y:zs))
 sumDigits :: [Integer] -> Integer
 sumDigits (x:xs)
   | null (x:xs) = 0
-  | xs == [] = sum (toDigits x)
+  | null xs = sum (toDigits x)
   | otherwise = sum (toDigits x) + sumDigits xs
 ----------------------------------------------------------------------
 -- Exercise 4
 ----------------------------------------------------------------------
 
--- |
+-- |which solves this problem in as few moves as possible.
 --
 -- >>> validate 4012888888881881
 -- True
@@ -78,7 +78,7 @@ sumDigits (x:xs)
 -- False
 
 validate :: Integer -> Bool
-validate x = ((sumDigits . doubleEveryOther . toDigits) x) `mod` 10 == 0
+validate x = (sumDigits . doubleEveryOther . toDigits) x `mod` 10 == 0
 
 ----------------------------------------------------------------------
 -- Exercise 5
