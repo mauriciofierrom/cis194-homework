@@ -50,6 +50,7 @@ insert l Leaf = Node Leaf l Leaf
 insert l'@(LogMessage _ t _) (Node l p@(LogMessage _ t' _) r) 
   | t < t'  = Node (insert l' l) p r
   | t >= t' = Node l p (insert l' r)
+insert _  (Node _ _ _) = error "Incorrect Format"
 
 ----------------------------------------------------------------------
 -- Exercise 3
@@ -61,8 +62,9 @@ insert l'@(LogMessage _ t _) (Node l p@(LogMessage _ t' _) r)
 --
 build :: [LogMessage] -> MessageTree
 build []         = Leaf
-build (x:[])     = insert x (build [])
-build (x:(y:zs)) = insert x (build (y:zs))
+-- build (x:[])     = insert x (build [])
+build (x:y)      = insert x (build y)
+-- build (x:(y:zs)) = insert x (build (y:zs))
 
 ----------------------------------------------------------------------
 -- Exercise 4
@@ -74,7 +76,13 @@ build (x:(y:zs)) = insert x (build (y:zs))
 --
 
 inOrder :: MessageTree -> [LogMessage]
-inOrder = undefined
+inOrder Leaf = []
+inOrder (Node l m r) = inOrder l ++ [m] ++ inOrder r
+-- inOrder (Node Leaf ms Leaf) = [ms]
+-- inOrder (Node Leaf ms r) = ms:inOrder(r) 
+-- inOrder (Node (Node Leaf m r) ms r') = [m] ++ inOrder(r) ++ [ms] ++ inOrder(r')
+-- inOrder (Node (Node l m r) ms r') = inOrder(l) ++ [m] ++ inOrder(r)++[ms] ++ inOrder(r')
+-- inOrder n@(Node ln@(Node l m r) ms rn@(Node l' m' r')) 
 
 ----------------------------------------------------------------------
 -- Exercise 5
@@ -86,11 +94,23 @@ inOrder = undefined
 --
 
 whatWentWrong :: [LogMessage] -> [String]
-whatWentWrong = undefined
+whatWentWrong x = toString(filter errorHigherThan x)
+  where 
+    errorHigherThan (LogMessage (Error t)  _ _) 
+      | t > 50 = True
+      | otherwise = False
+    errorHigherThan (LogMessage Info _ _)    = False
+    errorHigherThan (LogMessage Warning _ _) = False
+    errorHigherThan (Unknown _)              = False
+
+    toString []                    = []
+    toString ((Unknown _):_)       = []
+    toString ((LogMessage _ _ s):[]) = [s]
+    toString ((LogMessage _ _ s):xs) = s:toString(xs)
 
 ----------------------------------------------------------------------
 -- Exercise 6 (Optional)
 ----------------------------------------------------------------------
 
 whoDidIt :: String
-whoDidIt = undefined
+whoDidIt = "Something"
