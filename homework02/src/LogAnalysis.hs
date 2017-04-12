@@ -99,8 +99,7 @@ whatWentWrong x = toString(filter errorHigherThan x)
     errorHigherThan (LogMessage (Error t)  _ _) 
       | t > 50 = True
       | otherwise = False
-    errorHigherThan (LogMessage Info _ _)    = False
-    errorHigherThan (LogMessage Warning _ _) = False
+    errorHigherThan (LogMessage _ _ _)    = False
     errorHigherThan (Unknown _)              = False
 
     toString []                    = []
