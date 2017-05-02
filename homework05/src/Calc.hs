@@ -25,15 +25,18 @@ import qualified Data.Map as M
 -- True
 
 eval :: ExprT -> Integer
-eval = undefined
-
+eval (ExprT.Add (Lit x) (Lit y))                  = eval (ExprT.Lit (x + y))
+eval (ExprT.Add a b)                              = eval a + eval b
+eval (ExprT.Mul (ExprT.Lit x) (ExprT.Lit y))      = eval (ExprT.Lit (x * y))
+eval (ExprT.Mul a b)                              = eval a * eval b
+eval (ExprT.Lit x)                                = x
 
 ----------------------------------------------------------------------
 -- Exercise 2
 ----------------------------------------------------------------------
 
 evalStr :: String -> Maybe Integer
-evalStr = undefined
+evalStr xs =  eval <$> parseExp ExprT.Lit ExprT.Add ExprT.Mul xs
 
 
 ----------------------------------------------------------------------

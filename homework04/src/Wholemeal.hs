@@ -7,6 +7,7 @@
 
 module Wholemeal where
 
+import Data.List
 ----------------------------------------------------------------------
 -- Exercise 1
 ----------------------------------------------------------------------
@@ -35,10 +36,10 @@ fun2 n
 -- False
 
 fun1' :: [Integer] -> Integer
-fun1' = undefined
+fun1' = product . map (\x -> x-2) . filter even
 
 fun2' :: Integer -> Integer
-fun2' = undefined
+fun2' x = sum $ filter even $ takeWhile (/=1) $ iterate (\y -> if even y then y `div` 2 else 3*y+1) x
 
 ----------------------------------------------------------------------
 -- Exercise 2
@@ -64,7 +65,7 @@ foldTree = undefined
 -- False
 
 xor :: [Bool] -> Bool
-xor = undefined
+xor = odd . foldl (\acc x -> if x then acc+1 else acc) 0
 
 -- |
 --
@@ -72,16 +73,21 @@ xor = undefined
 -- [2,3,4]
 
 map' :: (a -> b) -> [a] -> [b]
-map' = undefined
+map' f = foldr (\x acc -> (f x):acc) []
 
 -- Optional
 
 myFoldl :: (a -> b -> a) -> a -> [b] -> a
-myFoldl = undefined
+myFoldl f base xs = foldr (\x acc -> f acc x) base (reverse xs)
 
 ----------------------------------------------------------------------
 -- Exercise 4
 ----------------------------------------------------------------------
 
 sieveSundaram :: Integer -> [Integer]
-sieveSundaram = undefined
+sieveSundaram n = filter (<=n*2+1) $ map (\x -> x*2+1) ([1..(n*2+2)] \\ removed) 
+  where
+    removed = nub $ map (\(x,y) -> x+y+2*x*y) (cartProd [1..n] [1..n])
+
+cartProd :: [a] -> [b] -> [(a,b)]
+cartProd xs ys = [(x,y) | x <- xs, y <- ys]
