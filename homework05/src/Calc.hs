@@ -89,15 +89,18 @@ instance Exp Mod7 where
   lit x = Mod7 (x `mod` 7)
   add (Mod7 x) (Mod7 y) = Mod7 ((x + y) `mod` 7)
   mul (Mod7 x) (Mod7 y) = Mod7 ((x * y) `mod` 7)
-
+  
 ----------------------------------------------------------------------
 -- Exercise 5 (do this OR exercise 6)
 ----------------------------------------------------------------------
 
 instance Exp Program where
+  lit x = [PushI x]
+  add x y = x ++ y ++ [StackVM.Add]
+  mul x y = x ++ y ++ [StackVM.Mul]
 
 compile :: String -> Maybe Program
-compile = undefined
+compile x = stackVM <$> parseExp lit add mul x :: Maybe Program
 
 
 ----------------------------------------------------------------------
