@@ -25,7 +25,7 @@ import qualified Data.Map as M
 -- True
 
 eval :: ExprT -> Integer
-eval (ExprT.Add (Lit x) (Lit y))                  = eval (ExprT.Lit (x + y))
+eval (ExprT.Add (ExprT.Lit x) (ExprT.Lit y))      = eval (ExprT.Lit (x + y))
 eval (ExprT.Add a b)                              = eval a + eval b
 eval (ExprT.Mul (ExprT.Lit x) (ExprT.Lit y))      = eval (ExprT.Lit (x * y))
 eval (ExprT.Mul a b)                              = eval a * eval b
@@ -100,12 +100,36 @@ instance Exp Program where
   mul x y = x ++ y ++ [StackVM.Mul]
 
 compile :: String -> Maybe Program
-compile x = stackVM <$> parseExp lit add mul x :: Maybe Program
+compile = parseExp lit add mul
 
 
 ----------------------------------------------------------------------
 -- Exercise 6 (do this OR exercise 5)
 ----------------------------------------------------------------------
+class HasVars a where
+  var :: String -> a
+
+data VarExprT = Var String
+           | Lit Integer
+           | Add VarExprT VarExprT
+           | Mul VarExprT VarExprT
+  deriving (Show, Eq)
+
+instance HasVars VarExprT where
+  var = Calc.Var
+
+instance Exp VarExprT where
+  lit = Calc.Lit
+  add = Calc.Add
+  mul = Calc.Mul
+
+instance HasVars (M.Map String Integer -> Maybe Integer) where
+  var = M.lookup
+
+instance Exp (M.Map String Integer -> Maybe Integer) where
+  lit = undefined
+  add = undefined
+  mul = undefined
 
 -- |
 --
@@ -122,3 +146,4 @@ withVars :: [(String, Integer)]
          -> (M.Map String Integer -> Maybe Integer)
          -> Maybe Integer
 withVars vs exp = exp $ M.fromList vs
+
