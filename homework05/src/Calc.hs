@@ -65,8 +65,8 @@ class Exp a where
 
 instance Exp ExprT where
   lit = ExprT.Lit
-  add = ExprT.Add 
-  mul = ExprT.Mul 
+  add = ExprT.Add
+  mul = ExprT.Mul
 
 instance Exp Integer where
   lit x = x
@@ -89,7 +89,7 @@ instance Exp Mod7 where
   lit x = Mod7 (x `mod` 7)
   add (Mod7 x) (Mod7 y) = Mod7 ((x + y) `mod` 7)
   mul (Mod7 x) (Mod7 y) = Mod7 ((x * y) `mod` 7)
-  
+
 ----------------------------------------------------------------------
 -- Exercise 5 (do this OR exercise 6)
 ----------------------------------------------------------------------
@@ -123,13 +123,15 @@ instance Exp VarExprT where
   add = Calc.Add
   mul = Calc.Mul
 
+ -- Variables can be interpreted as functions from a mapping
 instance HasVars (M.Map String Integer -> Maybe Integer) where
   var = M.lookup
 
 instance Exp (M.Map String Integer -> Maybe Integer) where
-  lit = undefined
-  add = undefined
-  mul = undefined
+  -- lit x = Just . M.findWithDefault x (show x)
+  lit x _ = Just x
+  add f g m = (+) <$> f m <*> g m
+  mul f g m = (*) <$> f m <*> g m
 
 -- |
 --
