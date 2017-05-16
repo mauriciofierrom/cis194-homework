@@ -128,7 +128,6 @@ instance HasVars (M.Map String Integer -> Maybe Integer) where
   var = M.lookup
 
 instance Exp (M.Map String Integer -> Maybe Integer) where
-  -- lit x = Just . M.findWithDefault x (show x)
   lit x _ = Just x
   add f g m = (+) <$> f m <*> g m
   mul f g m = (*) <$> f m <*> g m
@@ -148,4 +147,3 @@ withVars :: [(String, Integer)]
          -> (M.Map String Integer -> Maybe Integer)
          -> Maybe Integer
 withVars vs exp = exp $ M.fromList vs
-
