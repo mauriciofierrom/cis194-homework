@@ -58,11 +58,13 @@ posInt = Parser f
 
 instance Functor Parser where
   fmap :: (a -> b) -> Parser a -> Parser b
-  fmap = undefined
+  fmap f p = Parser m
+    where
+      m s = first f <$> runParser p s
 
 
 first :: (a -> b) -> (a, c) -> (b, c)
-first = undefined
+first f (x, y) = (f x, y)
 
 
 ----------------------------------------------------------------------
@@ -71,11 +73,14 @@ first = undefined
 
 instance Applicative Parser where
   pure :: a -> Parser a
-  pure = undefined
+  pure x = Parser (\_ -> Just (x,[]))
 
   (<*>) :: Parser (a -> b) -> Parser a -> Parser b
-  (<*>) = undefined
-
+  (<*>) p p' = Parser m
+    where
+      m s = case runParser p s of
+              Nothing -> Nothing
+              Just (f, c) -> runParser p' c
 
 ----------------------------------------------------------------------
 -- Exercise 3
