@@ -80,7 +80,7 @@ instance Applicative Parser where
     where
       m s = case runParser p s of
               Nothing -> Nothing
-              Just (f, c) -> runParser p' c
+              Just (f, c) -> first f <$> runParser p' c
 
 ----------------------------------------------------------------------
 -- Exercise 3
@@ -94,7 +94,7 @@ instance Applicative Parser where
 -- Nothing
 
 abParser :: Parser (Char, Char)
-abParser = undefined
+abParser = (,) <$> char 'a' <*> char 'b'
 
 
 -- |
@@ -105,7 +105,7 @@ abParser = undefined
 -- Nothing
 
 abParser_ :: Parser ()
-abParser_ = undefined
+abParser_ = (\_ _ -> ()) <$> char 'a' <*> char 'b'
 
 
 -- |
@@ -114,7 +114,7 @@ abParser_ = undefined
 -- Just ([12,34],"")
 
 intPair :: Parser [Integer]
-intPair = undefined
+intPair =  (\int _ int' -> [int,int']) <$> posInt <*> char ' ' <*> posInt
 
 
 ----------------------------------------------------------------------
@@ -123,10 +123,11 @@ intPair = undefined
 
 instance Alternative Parser where
   empty :: Parser a
-  empty = undefined
+  empty = Parser (\_ -> Nothing)
 
   (<|>) :: Parser a -> Parser a -> Parser a
-  (<|>) = undefined
+  (<|>) (Parser p) (Parser p') = Parser $ \s -> p s <|> p' s
+
 
 
 ----------------------------------------------------------------------
@@ -142,5 +143,11 @@ instance Alternative Parser where
 -- >>> runParser intOrUppercase "foo"
 -- Nothing
 
+intUnit :: Parser ()
+intUnit = (\_ -> ()) <$> posInt
+
+upperUnit :: Parser ()
+upperUnit = (\_ -> ()) <$> satisfy isUpper
+
 intOrUppercase :: Parser ()
-intOrUppercase = undefined
+intOrUppercase = intUnit <|> upperUnit
