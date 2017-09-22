@@ -105,7 +105,7 @@ abParser = (,) <$> char 'a' <*> char 'b'
 -- Nothing
 
 abParser_ :: Parser ()
-abParser_ = (\_ _ -> ()) <$> char 'a' <*> char 'b'
+abParser_ = const . const () <$> char 'a' <*> char 'b'
 
 
 -- |
@@ -144,10 +144,10 @@ instance Alternative Parser where
 -- Nothing
 
 intUnit :: Parser ()
-intUnit = (\_ -> ()) <$> posInt
+intUnit = const () <$> posInt
 
 upperUnit :: Parser ()
-upperUnit = (\_ -> ()) <$> satisfy isUpper
+upperUnit = const () <$> satisfy isUpper
 
 intOrUppercase :: Parser ()
 intOrUppercase = intUnit <|> upperUnit
