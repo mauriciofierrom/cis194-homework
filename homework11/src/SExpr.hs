@@ -26,7 +26,7 @@ import Data.Char
 -- Just ("","abcdeFGh")
 
 zeroOrMore :: Parser a -> Parser [a]
-zeroOrMore = undefined
+zeroOrMore p = oneOrMore p <|> pure []
 
 
 -- |
@@ -37,7 +37,7 @@ zeroOrMore = undefined
 -- Nothing
 
 oneOrMore :: Parser a -> Parser [a]
-oneOrMore = undefined
+oneOrMore p =  (:) <$> p <*> zeroOrMore p
 
 
 ----------------------------------------------------------------------
@@ -45,7 +45,7 @@ oneOrMore = undefined
 ----------------------------------------------------------------------
 
 spaces :: Parser String
-spaces = undefined
+spaces = oneOrMore (char ' ')
 
 
 -- |
@@ -60,7 +60,7 @@ spaces = undefined
 -- Nothing
 
 ident :: Parser String
-ident = undefined
+ident  = (:) <$> satisfy isAlpha <*> oneOrMore (satisfy isAlphaNum)
 
 
 ----------------------------------------------------------------------

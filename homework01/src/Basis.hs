@@ -29,7 +29,6 @@ toDigits x
       getInt = map (read . fromCharToString)
       fromCharToString :: Char -> String
       fromCharToString c = [c]-}
-
 toDigits :: Integer -> [Integer]
 toDigits x
   | x <=0 = []
@@ -87,6 +86,21 @@ validate x = (sumDigits . doubleEveryOther . toDigits) x `mod` 10 == 0
 type Peg = String
 type Move = (Peg, Peg)
 
+data Item = Hookshoot | Ocarina | FireRod
+data TipoDocumento = Cedula | Pasaporte | PermisoConducir
+
+useItem :: TipoDocumento -> String
+useItem x
+  | Cedula = "Es nacional"
+  | Pasaporte = "Extranjero"
+  | otherwise = "No se, pero conduce"
+
+data Person = P { name :: String, lastName :: String, age :: Integer }
+
+esDos :: Integer -> Bool
+esDos x
+  | x == 2 = True
+  | otherwise = False
 -- |
 --
 -- >>> hanoi 2 "a" "b" "c"

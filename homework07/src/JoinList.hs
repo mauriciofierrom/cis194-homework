@@ -9,6 +9,7 @@
 module JoinList where
 
 import Sized
+import Data.Monoid ((<>))
 
 data JoinList m a = Empty
                   | Single m a
@@ -20,10 +21,13 @@ data JoinList m a = Empty
 ----------------------------------------------------------------------
 
 (+++) :: Monoid m => JoinList m a -> JoinList m a -> JoinList m a
-(+++) = undefined
+(+++) a b = Append (tag a <> tag b) a b
 
 tag :: Monoid m => JoinList m a -> m
-tag = undefined
+tag j = case j of
+          Empty  -> mempty
+          Single m _ -> m
+          Append m _ _ -> m
 
 
 ----------------------------------------------------------------------
